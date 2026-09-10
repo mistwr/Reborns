@@ -85,7 +85,7 @@ public final class MainActivity extends Activity {
         notice.setAccessibilityLiveRegion(View.ACCESSIBILITY_LIVE_REGION_POLITE);
         root.addView(notice, new LinearLayout.LayoutParams(width, -2));
         LinearLayout composer = column(); composer.setPadding(dp(12), dp(8), dp(12), dp(8)); composer.setBackground(shape(CARD, 22));
-        input = new EditText(this); input.setId(1001); input.setTextColor(INK); input.setTextSize(16); input.setHintTextColor(MUTED);
+        input = new EditText(this); input.setId(R.id.message_input); input.setTextColor(INK); input.setTextSize(16); input.setHintTextColor(MUTED);
         input.setHint("O que vamos fazer hoje?"); input.setContentDescription("Mensagem para o Reborn");
         input.setBackgroundColor(Color.TRANSPARENT); input.setMinLines(1); input.setMaxLines(5);
         input.setInputType(InputType.TYPE_CLASS_TEXT | InputType.TYPE_TEXT_FLAG_MULTI_LINE | InputType.TYPE_TEXT_FLAG_CAP_SENTENCES);
@@ -98,7 +98,7 @@ public final class MainActivity extends Activity {
         controls.addView(tools, new LinearLayout.LayoutParams(0, dp(48), 1));
         mic = button("Ditar", false); mic.setContentDescription("Ditar uma mensagem"); mic.setOnClickListener(v -> dictate());
         controls.addView(mic, new LinearLayout.LayoutParams(dp(64), dp(48)));
-        send = button("Enviar", true); send.setId(1002); send.setOnClickListener(v -> send());
+        send = button("Enviar", true); send.setId(R.id.send_message); send.setOnClickListener(v -> send());
         controls.addView(send, new LinearLayout.LayoutParams(dp(84), dp(48)));
         composer.addView(controls); root.addView(composer, new LinearLayout.LayoutParams(width, -2));
         TextView footer = label("Reborn · código aberto · as respostas podem conter erros", 10, MUTED);

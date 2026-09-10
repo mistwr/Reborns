@@ -1,0 +1,4 @@
+<resources>
+    <item name="message_input" type="id" />
+    <item name="send_message" type="id" />
+</resources>
