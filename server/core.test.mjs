@@ -124,3 +124,24 @@ test('HTTP protege conversas e estado; limites impedem abuso da credencial pesso
   const limit = await fetch(root + '/v1/chat', { method: 'POST', headers, body: JSON.stringify(body) });
   assert.equal(limit.status, 429); assert.equal(calls, 20);
 });
+
+test('alojamento em configuração mantém autenticação e não simula IA sem chave', async t => {
+  const waiting = configFromEnv({ ...env, OPENAI_API_KEY: '', REBORN_SETUP_MODE: '1' });
+  let calls = 0;
+  const server = createServer(waiting, async () => { calls++; return answer(); });
+  await new Promise(resolve => server.listen(0, '127.0.0.1', resolve));
+  t.after(() => new Promise(resolve => server.close(resolve)));
+  const root = `http://127.0.0.1:${server.address().port}`;
+  const headers = { Authorization: 'Bearer ' + waiting.token, 'Content-Type': 'application/json' };
+  assert.equal((await fetch(root + '/health')).status, 200);
+  assert.equal((await fetch(root + '/v1/status')).status, 401);
+  const status = await (await fetch(root + '/v1/status', { headers })).json();
+  assert.equal(status.modelConfigured, false);
+  assert.match(status.message, /Falta configurar/);
+  assert.ok(!JSON.stringify(status).includes(waiting.token));
+  const reply = await fetch(root + '/v1/chat', { method: 'POST', headers, body: JSON.stringify(body) });
+  assert.equal(reply.status, 503);
+  assert.equal((await reply.json()).error, 'provider_not_configured');
+  assert.equal(calls, 0);
+  assert.equal(configFromEnv({ ...env, REBORN_SETUP_MODE: '1' }).modelConfigured, true);
+});

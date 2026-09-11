@@ -35,10 +35,12 @@ export function createServer(config, fetchImpl = fetch) {
       if (!authorized(req.headers.authorization, config.token))
         return json(res, 401, { error: 'unauthorized', message: 'Código de acesso incorreto ou em falta.' });
       if (req.method === 'GET' && path === '/v1/status') return json(res, 200, {
-        ok: true, provider: config.provider, model: config.model,
+        ok: true, provider: config.provider, model: config.model, modelConfigured: config.modelConfigured !== false,
         webSearch: config.provider === 'openai' && config.webSearch,
         connectors: config.provider === 'openai' ? (config.mcp || []).map(t => ({ name: t.server_label, url: t.server_url, tools: t.allowed_tools })) : [],
-        message: 'Servidor configurado. Envia uma mensagem para testar o modelo.'
+        message: config.modelConfigured === false
+          ? 'Servidor ligado. Falta configurar a chave OpenAI no servidor para conversar.'
+          : 'Servidor ligado e credenciais configuradas. Envia uma mensagem para testar o modelo.'
       });
       if (req.method !== 'POST' || !['/v1/chat', '/v1/approve', '/v1/cancel'].includes(path))
         return json(res, 404, { error: 'not_found', message: 'Rota não encontrada.' });

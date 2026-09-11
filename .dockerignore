@@ -1,0 +1,7 @@
+**
+!Dockerfile
+!server/
+!server/package.json
+!server/core.mjs
+!server/engine.mjs
+!server/index.mjs

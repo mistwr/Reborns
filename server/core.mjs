@@ -12,7 +12,8 @@ export function configFromEnv(env = process.env) {
     throw new Error('Define REBORN_ACCESS_TOKEN com pelo menos 32 caracteres ASCII sem espaços.');
   const provider = env.AI_PROVIDER || 'openai';
   if (!['openai', 'ollama'].includes(provider)) throw new Error('AI_PROVIDER deve ser openai ou ollama.');
-  if (provider === 'openai' && !env.OPENAI_API_KEY) throw new Error('Falta OPENAI_API_KEY no servidor.');
+  if (provider === 'openai' && !env.OPENAI_API_KEY && env.REBORN_SETUP_MODE !== '1')
+    throw new Error('Falta OPENAI_API_KEY no servidor.');
   if (provider === 'ollama' && !env.OLLAMA_MODEL) throw new Error('Define OLLAMA_MODEL para um modelo instalado.');
   const ollamaUrl = new URL(env.OLLAMA_BASE_URL || 'http://127.0.0.1:11434');
   if (!['http:', 'https:'].includes(ollamaUrl.protocol) || ollamaUrl.username || ollamaUrl.password)
@@ -41,6 +42,7 @@ export function configFromEnv(env = process.env) {
     return tool;
   });
   return Object.freeze({ token, provider, key: env.OPENAI_API_KEY, mcp,
+    modelConfigured: provider === 'openai' ? Boolean(env.OPENAI_API_KEY) : true,
     webSearch: env.OPENAI_WEB_SEARCH === '1',
     model: provider === 'openai' ? (env.OPENAI_MODEL || 'gpt-6-astra') : env.OLLAMA_MODEL,
     ollamaUrl: ollamaUrl.href.replace(/\/$/, '') });
@@ -70,6 +72,8 @@ export function validatePayload(body) {
 }
 
 export async function chat(config, body, fetchImpl = fetch, signal, continuation) {
+  if (config.modelConfigured === false)
+    throw new ApiError(503, 'provider_not_configured', 'Servidor ligado. Falta configurar a chave OpenAI no servidor para conversar.');
   const { messages, context, useTools } = continuation || validatePayload(body);
   const prompt = continuation?.prompt || instructions + (context ? `\n\nContexto fornecido pelo utilizador:\n${context}` : '');
   const openai = config.provider === 'openai';
