@@ -1,0 +1,3 @@
+<resources>
+    <string name="default_server_url" translatable="false">https://reborn-apk-api-production.up.railway.app</string>
+</resources>

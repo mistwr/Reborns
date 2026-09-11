@@ -38,6 +38,12 @@ O projeto não inclui os pesos GPT, não converte o GPT em software open source 
 
 O uso da API é cobrado pela conta do fornecedor e não usa a sessão/assinatura da aplicação ChatGPT. Sem servidor e credenciais, a APK abre e permite configuração, mas não gera respostas.
 
+### Servidor da edição pessoal
+
+A partir de 0.1.1, a APK traz `https://reborn-apk-api-production.up.railway.app` preenchido nas Definições. É um serviço pessoal autenticado, não um acesso público gratuito ao modelo. O dono obtém o seu código em `REBORN_ACCESS_TOKEN` nas variáveis do serviço Railway **reborn-apk-api**, projeto **REBORN AI**. O código e a chave OpenAI não estão incluídos na APK nem no repositório.
+
+O servidor pode estar publicado antes de a chave OpenAI ser configurada: a verificação mostra essa situação e o chat só funciona depois de a chave estar disponível. [Instruções de publicação e configuração no Railway](docs/railway.md). Quem reutilizar o projeto pode substituir o endereço na app ou em `app/src/main/res/values/strings.xml`.
+
 ### Usar Ollama
 
 Instala um modelo que caiba no teu computador e define:
@@ -53,7 +59,7 @@ Neste modo não é necessária chave OpenAI. A APK continua a ligar-se ao servid
 
 ## Ferramentas e conectores
 
-O interruptor **Ferramentas** vem desligado. Quando o ligas, a app permite que o servidor disponibilize ao modelo as ferramentas configuradas. O exemplo `.env` inclui pesquisa web e o MCP público DeepWiki para documentação de repositórios. São opções de configuração; a distribuição não contém contas ou credenciais ativas.
+O interruptor **Ferramentas** vem ligado nas novas instalações a partir de 0.1.1; podes desligá-lo a qualquer momento. Preferências de instalações existentes são preservadas. Quando está ligado, a app permite que o servidor disponibilize ao modelo as ferramentas configuradas. O exemplo `.env` inclui pesquisa web e o MCP público DeepWiki para documentação de repositórios. O serviço pessoal usa essa configuração; a utilização depende da chave OpenAI e do acesso ao modelo. A distribuição não contém contas ou credenciais.
 
 Para ligar outro serviço MCP, define `MCP_SERVERS_JSON` no servidor:
 

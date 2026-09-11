@@ -54,9 +54,9 @@ jobs:
       - name: Prepare APK
         run: |
           mkdir -p dist
-          cp app/build/outputs/apk/debug/app-debug.apk dist/Reborn-0.1.0-preview.apk
+          cp app/build/outputs/apk/debug/app-debug.apk dist/Reborn-0.1.1-preview.apk
           cd dist
-          sha256sum Reborn-0.1.0-preview.apk > SHA256SUMS.txt
+          sha256sum Reborn-0.1.1-preview.apk > SHA256SUMS.txt
       - uses: actions/upload-artifact@v4
         if: always()
         with:
@@ -72,5 +72,5 @@ jobs:
         env:
           GH_TOKEN: ${{ github.token }}
         run: |
-          tag="v0.1.0-preview.${GITHUB_RUN_NUMBER}"
-          gh release create "$tag" dist/Reborn-0.1.0-preview.apk dist/SHA256SUMS.txt --target "$GITHUB_SHA" --title "Reborn 0.1.0 — preview ${GITHUB_RUN_NUMBER}" --notes-file docs/release-notes.md --prerelease
+          tag="v0.1.1-preview.${GITHUB_RUN_NUMBER}"
+          gh release create "$tag" dist/Reborn-0.1.1-preview.apk dist/SHA256SUMS.txt --target "$GITHUB_SHA" --title "Reborn 0.1.1 — preview ${GITHUB_RUN_NUMBER}" --notes-file docs/release-notes.md --prerelease

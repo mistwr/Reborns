@@ -153,7 +153,7 @@ public final class MainActivity extends Activity {
         intro.setLineSpacing(dp(4), 1); intro.setPadding(dp(8), 0, dp(8), dp(24)); messages.addView(intro);
         if (!app.configured()) {
             LinearLayout setup = card(); setup.addView(label("Liga o teu assistente", 18, INK));
-            TextView info = label("Configura o endereço do servidor e o teu código de acesso para conversar.", 14, MUTED); info.setPadding(0, dp(8), 0, dp(12)); setup.addView(info);
+            TextView info = label("O endereço do servidor já vem preenchido. Introduz o teu código Reborn para ligar. Podes escolher outro servidor nas Definições.", 14, MUTED); info.setPadding(0, dp(8), 0, dp(12)); setup.addView(info);
             Button start = button("Configurar Reborn", true); start.setOnClickListener(v -> settings()); setup.addView(start); messages.addView(setup, spaced());
         }
         suggestion("Criar", "Ajuda-me a transformar esta ideia num plano concreto.");
@@ -209,7 +209,7 @@ public final class MainActivity extends Activity {
                     .setMessage("A conversa será removida deste telemóvel.").setNegativeButton("Manter", null).setPositiveButton("Apagar", (d,w) -> app.deleteCurrent()).show(); break;
                 case 5: if (speech != null) speech.stop(); break;
                 case 6: open("https://github.com/mistwr/Reborns"); break;
-                case 7: new AlertDialog.Builder(this).setTitle("Reborn 0.1.0").setMessage("Assistente pessoal de código aberto (MIT).\n\nO modelo corre no fornecedor configurado ou num computador com Ollama. Esta app não inclui os pesos GPT nem transfere a sessão do ChatGPT.\n\nO ditado e a leitura usam os serviços de voz do Android. O histórico e as definições ficam cifrados neste telemóvel.")
+                case 7: new AlertDialog.Builder(this).setTitle("Reborn 0.1.1").setMessage("Assistente pessoal de código aberto (MIT).\n\nO modelo corre no fornecedor configurado ou num computador com Ollama. Esta app não inclui os pesos GPT nem transfere a sessão do ChatGPT.\n\nO ditado e a leitura usam os serviços de voz do Android. O histórico e as definições ficam cifrados neste telemóvel.")
                     .setPositiveButton("Fechar", null).show(); break;
             } return true;
         }); popup.show();
@@ -243,10 +243,11 @@ public final class MainActivity extends Activity {
         JSONObject s = app.serverStatus; StringBuilder body = new StringBuilder();
         if (s == null) body.append("Verifica a ligação nas Definições para consultar as ferramentas configuradas.");
         else {
-            body.append("Modelo configurado: ").append(s.optString("model")).append("\n\nPesquisa web: ").append(s.optBoolean("webSearch") ? "configurada" : "desligada");
+            body.append(s.optString("message")).append("\n\nModelo escolhido: ").append(s.optString("model"))
+                    .append("\n\nPesquisa web: ").append(s.optBoolean("webSearch") ? "configurada" : "desligada");
             JSONArray connectors = s.optJSONArray("connectors");
             if (connectors != null) for (int i = 0; i < connectors.length(); i++) body.append("\n\n").append(connectors.optJSONObject(i).optString("name")).append("\n").append(connectors.optJSONObject(i).optString("url"));
-            body.append("\n\nAtiva Ferramentas para permitir a utilização. Cada chamada MCP apresenta os dados e pede a tua decisão. A disponibilidade real é verificada ao usar a ferramenta.");
+            body.append("\n\nO interruptor Ferramentas permite ou desliga a utilização. Cada chamada MCP apresenta os dados e pede a tua decisão. A disponibilidade real é verificada ao usar a ferramenta.");
         }
         new AlertDialog.Builder(this).setTitle("Ferramentas").setMessage(body).setPositiveButton("Fechar", null).show();
     }

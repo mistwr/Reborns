@@ -43,10 +43,13 @@ public final class RebornApp extends Application {
         if (chats.length() == 0) newChat();
     }
     static JSONObject fresh() {
-        JSONObject d = new JSONObject(); put(d, "chats", new JSONArray()); put(d, "tools", false); return d;
+        JSONObject d = new JSONObject(); put(d, "chats", new JSONArray()); put(d, "tools", true); return d;
     }
     static void put(JSONObject o, String k, Object v) { try { o.put(k, v); } catch (Exception ignored) {} }
-    String setting(String key) { return data.optString(key, ""); }
+    String setting(String key) {
+        String value = data.optString(key, "");
+        return "url".equals(key) && value.isEmpty() ? getString(R.string.default_server_url) : value;
+    }
     boolean configured() { return !setting("url").isEmpty() && setting("token").length() >= 32 && !storageLocked; }
     JSONArray chats() { return data.optJSONArray("chats"); }
     JSONObject current() {
@@ -91,7 +94,8 @@ public final class RebornApp extends Application {
         worker.execute(() -> {
             try {
                 JSONObject status = ApiClient.request(url, token, "/v1/status", null);
-                main.post(() -> { serverStatus = status; busy = false; notice = "Servidor ligado. Envia uma mensagem para testar o modelo."; notifyChanged(); });
+                main.post(() -> { serverStatus = status; busy = false;
+                    notice = status.optString("message", "Servidor ligado. Envia uma mensagem para testar o modelo."); notifyChanged(); });
             } catch (Exception e) { main.post(() -> { serverStatus = null; busy = false; notice = e.getMessage(); notifyChanged(); }); }
         });
     }
